@@ -2,6 +2,8 @@ import Data.*;
 import Data.Date;
 import exceptions.XSSFException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -141,9 +143,11 @@ public class Excel {
 
     private void workTime(Worker w, Sheet sh){
         headingOfTable(sh, w.isOfficeWorker());
-        CellStyle style = workbook.createCellStyle();
-        CreationHelper createHelper = workbook.getCreationHelper();
-        style.setDataFormat(createHelper.createDataFormat().getFormat("mm/dd/yy hh:mm:ss"));
+
+        XSSFCellStyle style= workbook.createCellStyle();
+        style.setFillBackgroundColor(IndexedColors.LIGHT_ORANGE.getIndex());
+        style.setFillPattern(FillPatternType.DIAMONDS);
+
         Row row;
         Time sum1 = null;
         Time sum2 = null;
@@ -155,10 +159,13 @@ public class Excel {
             if(dt.getStartEntr1()!=null&&dt.getEndEntr1()!=null) {
                 row = sh.createRow(nRow++);
 
-                row.createCell(0).setCellValue(dt.getDate().toString());
-                row.setRowStyle(style);
+                Cell cell = row.createCell(1);
 
-                row.createCell(1).setCellValue(dt.getStartEntr1().toString());
+                row.createCell(0).setCellValue(dt.getDate().toString());
+
+                Time start = dt.getStartEntr1();
+                cell.setCellValue(start.toString());
+
 
                 if (dt.getStartEntr2() != null) row.createCell(2).setCellValue(dt.getStartEntr2().toString());
                 if (dt.getEndEntr2() != null) row.createCell(3).setCellValue(dt.getEndEntr2().toString());
@@ -180,9 +187,16 @@ public class Excel {
                 psum2 = Time.add(psum2, dt.getWorkTime2());
 
                 if(!w.isOfficeWorker()) {
+                    if(start.compare(new Time(start.getDay(), 8, 0, 0))>0){
+                        cell.setCellStyle(style);
+                    }
                     Time lunch = Time.sub(res2, dt.getWorkTime2());
                     sumlunch = Time.add(sumlunch, lunch);
                     if (lunch != null) row.createCell(12).setCellValue(lunch.toString());
+                } else {
+                    if(start.compare(new Time(start.getDay(), 9, 0, 0))>0){
+                        cell.setCellStyle(style);
+                    }
                 }
                 Time pause = Time.sub(res1, dt.getWorkTime1());
                 sumpause = Time.add(sumpause, pause);

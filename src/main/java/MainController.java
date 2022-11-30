@@ -37,7 +37,7 @@ public class MainController {
             openFile(excel.createAntwort());
         } catch (FileAlreadyExistsException e){
             printError("Файл уже открыт");
-        } catch(IOException | RuntimeException e){
+        } catch(IOException e){
             e.printStackTrace();
             printError(e.getMessage());
         }

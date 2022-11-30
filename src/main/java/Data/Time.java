@@ -64,4 +64,8 @@ public class Time {
         return sek;
     }
 
+    public int getDay(){
+        return day;
+    }
+
 }

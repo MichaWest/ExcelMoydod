@@ -22,11 +22,6 @@ public class Excel {
 
     public Excel(File f) throws FileNotFoundException, XSSFException {
         try {
-            /*Workbook workbook = new Workbook();
-            System.out.println(f.getPath());
-            workbook.loadFromFile(f.getPath());
-            workbook.getDataSorter().getSortColumns().add(1, SortComparsionType.Values, OrderBy.Ascending);
-            workbook.saveToFile(f.getPath());*/
             FileInputStream file = new FileInputStream(f);
             wb = new XSSFWorkbook(file);
         }catch (IOException e){
@@ -142,7 +137,7 @@ public class Excel {
     }
 
     private void workTime(Worker w, Sheet sh){
-        headingOfTable(sh, w.isOfficeWorker());
+        headingOfTable(sh, w.getPost());
 
         XSSFCellStyle style= workbook.createCellStyle();
         style.setFillBackgroundColor(IndexedColors.LIGHT_ORANGE.getIndex());
@@ -186,7 +181,7 @@ public class Excel {
                 psum1 = Time.add(psum1, dt.getWorkTime1());
                 psum2 = Time.add(psum2, dt.getWorkTime2());
 
-                if(!w.isOfficeWorker()) {
+                if(w.getPost()==Post.Worker) {
                     if(start.compare(new Time(start.getDay(), 8, 0, 0))>0){
                         cell.setCellStyle(style);
                     }
@@ -198,6 +193,7 @@ public class Excel {
                         cell.setCellStyle(style);
                     }
                 }
+
                 Time pause = Time.sub(res1, dt.getWorkTime1());
                 sumpause = Time.add(sumpause, pause);
                 if (pause != null) row.createCell(13).setCellValue(pause.toString());
@@ -210,14 +206,14 @@ public class Excel {
         if(sum1!=null) row.createCell(7).setCellValue(sum1.toString());
         if(psum2!=null) row.createCell(9).setCellValue(psum2.toString());
         if(psum1!=null) row.createCell(10).setCellValue(psum1.toString());
-        if(!w.isOfficeWorker()) {
+        if(w.getPost()==Post.Worker) {
             if (sumlunch != null) row.createCell(12).setCellValue(sumlunch.toString());
         }
         if (sumpause != null) row.createCell(13).setCellValue(sumpause.toString());
         sh.createRow(nRow++);
     }
 
-    private void headingOfTable(Sheet sh, boolean office){
+    private void headingOfTable(Sheet sh, Post post){
         Row row = sh.createRow(nRow++);
         row.createCell(0).setCellValue("Дата");
         row.createCell(1).setCellValue("Приход");
@@ -228,7 +224,7 @@ public class Excel {
         row.createCell(7).setCellValue("ПЕ-ПО предприятие");
         row.createCell(9).setCellValue("Полезное время цех");
         row.createCell(10).setCellValue("Полезное время предприятие");
-        if(!office) {
+        if(post==Post.Worker) {
             row.createCell(12).setCellValue("Обед");
         }
         row.createCell(13).setCellValue("Перекур");

@@ -9,11 +9,15 @@ public class Worker implements Comparable<Worker> {
     private String name;
     private String vorname;
     private final int number;
-    private final boolean ofice;
+    private Post post;
 
     public Worker(int i, boolean b){
         number = i;
-        ofice = b;
+        if(b){
+            post = Post.Office;
+        } else {
+            post = Post.Worker;
+        }
     }
 
     public void setName(String s){
@@ -112,7 +116,7 @@ public class Worker implements Comparable<Worker> {
         return Integer.compare(this.number, o.number);
     }
 
-    public boolean isOfficeWorker(){
-        return ofice;
+    public Post getPost(){
+        return post;
     }
 }

@@ -58,7 +58,7 @@ public class MainController {
     private static void configureFileChooser(final FileChooser fileChooser) {
         fileChooser.setTitle("Выберите таблицу");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("excel", "*.xlsx"));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("excel", "*.xlsx", "*.xls"));
     }
 
     private void printError(String err){

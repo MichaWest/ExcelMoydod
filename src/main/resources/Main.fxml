@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
@@ -15,11 +12,9 @@
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="MainController">
-    <children>
-        <Button layoutX="14.0" layoutY="20.0" mnemonicParsing="false" onAction="#load" prefHeight="25.0" prefWidth="50.0" text="Load" fx:id="l"/>
+        <Button layoutX="14.0" layoutY="20.0" mnemonicParsing="false" onAction="#load" prefHeight="25.0" prefWidth="50.0" text="Load" />
         <Text fill="#800001" layoutX="82.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Load File" wrappingWidth="130.13671875" fx:id="path"/>
-        <Button layoutX="14.0" layoutY="68.0" mnemonicParsing="false" onAction="#add" text="Add" fx:id="a"/>
-        <Button layoutX="14.0" layoutY="108.0" mnemonicParsing="false" onAction="#create" text="Create" fx:id="c"/>
-    </children>
+        <Button layoutX="14.0" layoutY="68.0" mnemonicParsing="false" onAction="#add" text="Add" />
+        <Button layoutX="14.0" layoutY="108.0" mnemonicParsing="false" onAction="#create" text="Create" />
 </Pane>
 

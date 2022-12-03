@@ -9,7 +9,7 @@ public class Worker implements Comparable<Worker> {
     private String name;
     private String vorname;
     private final int number;
-    private Post post;
+    private final Post post;
 
     public Worker(int i, boolean b){
         number = i;

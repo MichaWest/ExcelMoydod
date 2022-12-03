@@ -13,7 +13,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -70,9 +69,9 @@ public class MainController {
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
             tabelles.add(file);
-            String t = "";
+            StringBuilder t = new StringBuilder();
             for(File f: tabelles){
-                t = t+", "+f.getName();
+                t.append(", ").append(f.getName());
             }
             path.setText("Файл: "+tabelle.getName()+t);
             path.setFill(Color.BLACK);
@@ -91,9 +90,9 @@ public class MainController {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setFont(new Font(13));
         gc.setFill(new Color(0.4, 0.4, 0.4, 0.4));
-        gc.fillRect((w/2 - (b+10)/2), h-a, b+10, a);
+        gc.fillRect((w/2.f - (b+10)/2.f), h-a, b+10, a);
         gc.setFill(new Color(0.85, 0.05, 0.05, 0.8));
-        gc.fillText(err, (double)(w/2 - b/2), (double)(h-a/2));
+        gc.fillText(err, (w/2.f - b/2.f), (h-a/2.f));
         pane.getChildren().add(canvas);
         pane.setOnMousePressed(event1 -> pane.getChildren().remove(canvas));
         pane.setOnKeyPressed(event1 -> pane.getChildren().remove(canvas));

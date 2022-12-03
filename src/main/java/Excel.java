@@ -17,7 +17,7 @@ import java.util.*;
 public class Excel {
     //private XSSFWorkbook wbXSSF;
     //private HSSFWorkbook wbHSSF;
-    private List<Workbook> workbooks = new ArrayList<>();
+    private final List<Workbook> workbooks = new ArrayList<>();
     private final Map<Integer, Worker> workers = new HashMap<>();
     private final TreeMap<DateTime, Data> filedata = new TreeMap<>();
     private final XSSFWorkbook workbook = new XSSFWorkbook();
@@ -102,14 +102,12 @@ public class Excel {
 
     private void readTabelleXSSF(XSSFWorkbook wbXSSF) throws IOException {
         XSSFSheet sheet = wbXSSF.getSheetAt(0);
-        Iterator<Row> rowIterator = sheet.iterator();
-        while(rowIterator.hasNext()){
-            Row row = rowIterator.next();
-            if(row.getCell(0)!=null){
+        for (Row row : sheet) {
+            if (row.getCell(0) != null) {
                 String turniket = row.getCell(12).getStringCellValue();
-                if (turniket.contains("Турникет")){
+                if (turniket.contains("Турникет")) {
                     String i = row.getCell(6).getStringCellValue();
-                    if( i!=null && !i.equals("")){
+                    if (i != null && !i.equals("")) {
                         int id = Integer.parseInt(i);
                         String name = row.getCell(7).getStringCellValue();
                         String vorname = row.getCell(8).getStringCellValue();
@@ -125,14 +123,12 @@ public class Excel {
 
     private void readTabelleHSSF(HSSFWorkbook wbHSSF) throws IOException {
         HSSFSheet sheet = wbHSSF.getSheetAt(0);
-        Iterator<Row> rowIterator = sheet.iterator();
-        while(rowIterator.hasNext()){
-            Row row = rowIterator.next();
-            if(row.getCell(1) != null){
+        for (Row row : sheet) {
+            if (row.getCell(1) != null) {
                 String turniket = row.getCell(12).getStringCellValue();
-                if (turniket.contains("Турникет")){
+                if (turniket.contains("Турникет")) {
                     String i = row.getCell(6).getStringCellValue();
-                    if( i!=null && !i.equals("")){
+                    if (i != null && !i.equals("")) {
                         int id = Integer.parseInt(i);
                         String name = row.getCell(7).getStringCellValue();
                         String vorname = row.getCell(8).getStringCellValue();
@@ -171,7 +167,7 @@ public class Excel {
     }
 
     private int nRow = 0;
-    private void writeInWorbook() throws IOException {
+    private void writeInWorbook() {
         Sheet sheet = workbook.createSheet();
         for(Map.Entry<Integer, Worker> worker : workers.entrySet()){
             passport(worker.getValue(), sheet);

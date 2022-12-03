@@ -1,12 +1,9 @@
 import Data.*;
 import Data.Date;
 import exceptions.XSSFException;
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xddf.usermodel.XDDFAdjustHandlePolar;
-import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -20,7 +17,7 @@ import java.util.*;
 public class Excel {
     //private XSSFWorkbook wbXSSF;
     //private HSSFWorkbook wbHSSF;
-    private List<Woorkbook> workbooks;
+    private List<Workbook> workbooks = new ArrayList<>();
     private final Map<Integer, Worker> workers = new HashMap<>();
     private final TreeMap<DateTime, Data> filedata = new TreeMap<>();
     private final XSSFWorkbook workbook = new XSSFWorkbook();
@@ -32,10 +29,26 @@ public class Excel {
             String loadFileName = f.getName();
             if(loadFileName.contains(".xlsx")) {
                 XSSFWorkbook wbXSSF = new XSSFWorkbook(file);
-                workbooks.add(new Woorkbook(wbXSSF, loadFileName));
+                workbooks.add(new Workbook(wbXSSF, loadFileName));
             }else if(loadFileName.contains(".xls")) {
                 HSSFWorkbook wbHSSF = new HSSFWorkbook(file);
-                workbooks.add(new Woorkbook(wbHSSF, loadFileName));
+                workbooks.add(new Workbook(wbHSSF, loadFileName));
+            }
+        }catch (IOException e){
+            throw new XSSFException();
+        }
+    }
+
+    public void add(File f) throws FileNotFoundException, XSSFException {
+        try {
+            FileInputStream file = new FileInputStream(f);
+            String loadFileName = f.getName();
+            if(loadFileName.contains(".xlsx")) {
+                XSSFWorkbook wbXSSF = new XSSFWorkbook(file);
+                workbooks.add(new Workbook(wbXSSF, loadFileName));
+            }else if(loadFileName.contains(".xls")) {
+                HSSFWorkbook wbHSSF = new HSSFWorkbook(file);
+                workbooks.add(new Workbook(wbHSSF, loadFileName));
             }
         }catch (IOException e){
             throw new XSSFException();
@@ -45,11 +58,11 @@ public class Excel {
     public File createAntwort() throws IOException {
         String filename = "NewExcelFile.xlsx";
         try {
-            for(Woorkbook w: workbooks ) {
+            for(Workbook w: workbooks ) {
                 if (w.filename.contains(".xlsx")) {
-                    readTabelleXSSF();
+                    readTabelleXSSF(w.wX);
                 } else {
-                    readTabelleHSSF();
+                    readTabelleHSSF(w.wH);
                 }
             }
 
@@ -87,7 +100,7 @@ public class Excel {
         }
     }
 
-    private void readTabelleXSSF() throws IOException {
+    private void readTabelleXSSF(XSSFWorkbook wbXSSF) throws IOException {
         XSSFSheet sheet = wbXSSF.getSheetAt(0);
         Iterator<Row> rowIterator = sheet.iterator();
         while(rowIterator.hasNext()){
@@ -110,7 +123,7 @@ public class Excel {
         wbXSSF.close();
     }
 
-    private void readTabelleHSSF() throws IOException {
+    private void readTabelleHSSF(HSSFWorkbook wbHSSF) throws IOException {
         HSSFSheet sheet = wbHSSF.getSheetAt(0);
         Iterator<Row> rowIterator = sheet.iterator();
         while(rowIterator.hasNext()){
@@ -276,18 +289,18 @@ public class Excel {
         row.createCell(13).setCellValue("Перекур");
     }
 
-    class Woorkbook{
+    class Workbook {
         XSSFWorkbook wX;
         String filename;
         HSSFWorkbook wH;
 
-        Woorkbook(XSSFWorkbook wX, String s){
+        Workbook(XSSFWorkbook wX, String s){
             wH = null;
             this.wX = wX;
             filename = s;
         }
 
-        Woorkbook(HSSFWorkbook wH, String s){
+        Workbook(HSSFWorkbook wH, String s){
             wX = null;
             this.wH = wH;
             filename = s;

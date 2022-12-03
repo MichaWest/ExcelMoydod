@@ -13,6 +13,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,6 +23,7 @@ public class MainController {
     private final Desktop desktop = Desktop.getDesktop();
     private final FileChooser fileChooser = new FileChooser();
     private File tabelle;
+    private Set<File> tabelles = new TreeSet<>();
     private final int h = 122;
     private final int w = 343;
 
@@ -34,6 +38,9 @@ public class MainController {
         try{
             if(tabelle==null) throw new LoadFileException();
             Excel excel = new Excel(tabelle);
+            for(File f: tabelles){
+                excel.add(f);
+            }
             openFile(excel.createAntwort());
         } catch (FileAlreadyExistsException e){
             printError("Файл уже открыт");
@@ -50,7 +57,24 @@ public class MainController {
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
             tabelle = file;
+            tabelles = new TreeSet<>();
             path.setText("Файл: "+file.getName());
+            path.setFill(Color.BLACK);
+        }
+    }
+
+    @FXML
+    void add(){
+        Stage stage = new Stage();
+        configureFileChooser(fileChooser);
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+            tabelles.add(file);
+            String t = "";
+            for(File f: tabelles){
+                t = t+", "+f.getName();
+            }
+            path.setText("Файл: "+tabelle.getName()+t);
             path.setFill(Color.BLACK);
         }
     }

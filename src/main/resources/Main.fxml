@@ -9,16 +9,17 @@
 
 
 <Pane fx:id="pane"
-      maxHeight="122.0" maxWidth="343.0"
-      minHeight="122.0" minWidth="343.0"
-      prefHeight="122.0" prefWidth="343.0"
+      maxHeight="162.0" maxWidth="343.0"
+      minHeight="162.0" minWidth="343.0"
+      prefHeight="162.0" prefWidth="343.0"
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="MainController">
     <children>
         <Button layoutX="14.0" layoutY="20.0" mnemonicParsing="false" onAction="#load" prefHeight="25.0" prefWidth="50.0" text="Load" fx:id="l"/>
         <Text fill="#800001" layoutX="82.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Load File" wrappingWidth="130.13671875" fx:id="path"/>
-        <Button layoutX="14.0" layoutY="68.0" mnemonicParsing="false" onAction="#create" text="Create" fx:id="c"/>
+        <Button layoutX="14.0" layoutY="68.0" mnemonicParsing="false" onAction="#add" text="Add" fx:id="a"/>
+        <Button layoutX="14.0" layoutY="108.0" mnemonicParsing="false" onAction="#create" text="Create" fx:id="c"/>
     </children>
 </Pane>
 

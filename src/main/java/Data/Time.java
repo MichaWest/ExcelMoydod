@@ -1,16 +1,18 @@
 package Data;
 
 public class Time {
+    int month;
     int day;
     int minute;
     int hour;
     int sek;
 
-    public Time(int d, int h, int m, int s) {
+    public Time(int mo, int d, int h, int m, int s) {
         day = d;
         hour = h;
         minute = m;
         sek = s;
+        month = mo;
     }
 
     @Override
@@ -27,7 +29,7 @@ public class Time {
             s = s - h * 3600;
             int m = s / 60;
             s = s - m * 60;
-            return new Time(0, h, m, s);
+            return new Time(0, 0, h, m, s);
         } else {
             return null;
         }
@@ -42,14 +44,22 @@ public class Time {
             s = s - h * 3600;
             int m = s / 60;
             s = s - m * 60;
-            return new Time(0, h, m, s);
+            return new Time(0, 0, h, m, s);
         } else {
             return null;
         }
     }
 
     public float compare(Time a) {
-        return ((long) (this.day - a.day) * 24 + (this.hour - a.hour) + (this.minute - a.minute) / 60.0f + (this.sek - a.sek) / 3600.0f);
+        int amonth = a.month;
+        int month = this.month;
+        if(amonth==1 && month==12){
+            amonth = 13;
+        }
+        if(amonth==12 && month==1){
+            month = 13;
+        }
+        return ((long) (month-a.month)*24*31 + (this.day - a.day) * 24 + (this.hour - a.hour) + (this.minute - a.minute) / 60.0f + (this.sek - a.sek) / 3600.0f);
     }
 
     public int getHour() {
@@ -66,6 +76,10 @@ public class Time {
 
     public int getDay(){
         return day;
+    }
+
+    public int getMonth(){
+        return month;
     }
 
 }

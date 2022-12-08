@@ -15,12 +15,11 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class Excel {
-    //private XSSFWorkbook wbXSSF;
-    //private HSSFWorkbook wbHSSF;
     private final List<Workbook> workbooks = new ArrayList<>();
     private final Map<Integer, Worker> workers = new HashMap<>();
     private final TreeMap<DateTime, Data> filedata = new TreeMap<>();
     private final XSSFWorkbook workbook = new XSSFWorkbook();
+    private final Map<DateTime, Worker> latecomers = new TreeMap<>();
 
 
     public Excel(File f) throws FileNotFoundException, XSSFException {
@@ -155,23 +154,31 @@ public class Excel {
         DateTime dateTime = new DateTime(new Date(jahr, month, day, hour, minute, second), id);
         String turn = row.getCell(12).getStringCellValue();
         if (turn.contains("2")&&turn.contains("Вых")) {
-            dateTime.setEndEntr2(new Time(day, hour, minute, second));
+            dateTime.setEndEntr2(new Time(month, day, hour, minute, second));
         } else if (turn.contains("1")&&turn.contains("Вых")) {
-            dateTime.setEndEntr1(new Time(day, hour, minute, second));
+            dateTime.setEndEntr1(new Time(month, day, hour, minute, second));
         } else if (turn.contains("2")&&turn.contains("Вх")) {
-            dateTime.setStartEntr2(new Time(day, hour, minute, second));
+            dateTime.setStartEntr2(new Time(month, day, hour, minute, second));
         } else if (turn.contains("1")&&turn.contains("Вх")) {
-            dateTime.setStartEntr1(new Time(day, hour, minute, second));
+            dateTime.setStartEntr1(new Time(month, day, hour, minute, second));
         }
         return dateTime;
     }
 
     private int nRow = 0;
     private void writeInWorbook() {
-        Sheet sheet = workbook.createSheet();
+        Sheet sheet = workbook.createSheet("Время работы");
         for(Map.Entry<Integer, Worker> worker : workers.entrySet()){
             passport(worker.getValue(), sheet);
             workTime(worker.getValue(), sheet);
+        }
+        Sheet late = workbook.createSheet();
+        int n = 0;
+        for(Map.Entry<DateTime, Worker> l: latecomers.entrySet()){
+            Row row = late.createRow(n++);
+            row.createCell(0).setCellValue(l.getKey().getDate().toString());
+            row.createCell(1).setCellValue(l.getKey().getStartEntr1().toString());
+            row.createCell(2).setCellValue(l.getValue().getName()+" "+l.getValue().getVorname());
         }
     }
 
@@ -237,14 +244,18 @@ public class Excel {
                 psum2 = Time.add(psum2, dt.getWorkTime2());
 
                 if(w.getPost()==Post.Worker) {
-                    if(start.compare(new Time(start.getDay(), 8, 0, 0))>0){
+                    if(
+                            (start.compare(new Time(start.getMonth(), start.getDay(), 8, 0, 0))>0 && start.compare(new Time(start.getMonth(), start.getDay(), 17, 0, 0))<0)
+                    || (start.compare(new Time(start.getMonth(), start.getDay(), 20, 0, 0))>0 && start.compare(new Time(start.getMonth(), start.getDay()+1, 6, 0, 0))<0)){
+                        latecomers.put(dt, w);
                         cell.setCellStyle(style);
                     }
                     Time lunch = Time.sub(res2, dt.getWorkTime2());
                     sumlunch = Time.add(sumlunch, lunch);
                     if (lunch != null) row.createCell(12).setCellValue(lunch.toString());
                 } else {
-                    if(start.compare(new Time(start.getDay(), 9, 0, 0))>0){
+                    if(start.compare(new Time(start.getMonth(), start.getDay(), 9, 0, 0))>0){
+                        latecomers.put(dt, w);
                         cell.setCellStyle(style);
                     }
                 }

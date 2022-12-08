@@ -154,13 +154,13 @@ public class Excel {
         DateTime dateTime = new DateTime(new Date(jahr, month, day, hour, minute, second), id);
         String turn = row.getCell(12).getStringCellValue();
         if (turn.contains("2")&&turn.contains("Вых")) {
-            dateTime.setEndEntr2(new Time(month, day, hour, minute, second));
+            dateTime.setEndEntr2(new Time(month, day, hour, minute, second, (jahr-2020)%2==0 ));
         } else if (turn.contains("1")&&turn.contains("Вых")) {
-            dateTime.setEndEntr1(new Time(month, day, hour, minute, second));
+            dateTime.setEndEntr1(new Time(month, day, hour, minute, second, (jahr-2020)%2==0 ));
         } else if (turn.contains("2")&&turn.contains("Вх")) {
-            dateTime.setStartEntr2(new Time(month, day, hour, minute, second));
+            dateTime.setStartEntr2(new Time(month, day, hour, minute, second, (jahr-2020)%2==0 ));
         } else if (turn.contains("1")&&turn.contains("Вх")) {
-            dateTime.setStartEntr1(new Time(month, day, hour, minute, second));
+            dateTime.setStartEntr1(new Time(month, day, hour, minute, second, (jahr-2020)%2==0 ));
         }
         return dateTime;
     }
@@ -245,8 +245,8 @@ public class Excel {
 
                 if(w.getPost()==Post.Worker) {
                     if(
-                            (start.compare(new Time(start.getMonth(), start.getDay(), 8, 0, 0))>0 && start.compare(new Time(start.getMonth(), start.getDay(), 17, 0, 0))<0)
-                    || (start.compare(new Time(start.getMonth(), start.getDay(), 20, 0, 0))>0 && start.compare(new Time(start.getMonth(), start.getDay()+1, 6, 0, 0))<0)){
+                            (start.compare(new Time(start.getMonth(), start.getDay(), 8, 0, 0, start.isLeapyear()))>0 && start.compare(new Time(start.getMonth(), start.getDay(), 17, 0, 0, start.isLeapyear()))<0)
+                    || (start.compare(new Time(start.getMonth(), start.getDay(), 20, 0, 0, start.isLeapyear()))>0 && start.compare(new Time(start.getMonth(), start.getDay()+1, 6, 0, 0, start.isLeapyear()))<0)){
                         latecomers.put(dt, w);
                         cell.setCellStyle(style);
                     }
@@ -254,7 +254,7 @@ public class Excel {
                     sumlunch = Time.add(sumlunch, lunch);
                     if (lunch != null) row.createCell(12).setCellValue(lunch.toString());
                 } else {
-                    if(start.compare(new Time(start.getMonth(), start.getDay(), 9, 0, 0))>0){
+                    if(start.compare(new Time(start.getMonth(), start.getDay(), 9, 0, 0, start.isLeapyear()))>0){
                         latecomers.put(dt, w);
                         cell.setCellStyle(style);
                     }

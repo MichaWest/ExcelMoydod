@@ -6,13 +6,24 @@ public class Time {
     int minute;
     int hour;
     int sek;
+    boolean leapyear;
 
-    public Time(int mo, int d, int h, int m, int s) {
+    public Time(int mo, int d, int h, int m, int s, boolean l) {
         day = d;
         hour = h;
         minute = m;
         sek = s;
         month = mo;
+        leapyear = l;
+    }
+
+    private Time(int mo, int d, int h, int m, int s){
+        day = d;
+        hour = h;
+        minute = m;
+        sek = s;
+        month = mo;
+        leapyear = false;
     }
 
     @Override
@@ -51,15 +62,32 @@ public class Time {
     }
 
     public float compare(Time a) {
-        int amonth = a.month;
-        int month = this.month;
-        if(amonth==1 && month==12){
+        long amonth = a.month;
+        long month = this.month;
+        int k = getDayInMonth(month);
+        int ak = getDayInMonth(amonth);
+        //System.out.println(month+" " + k+", " +amonth+" "+ak);
+        if(amonth==1 & month==12)
             amonth = 13;
+        else if (amonth==12 & month==1)
+            month = 1;
+        return (( month * k - amonth * ak)*24 + (this.day - a.day) * 24 + (this.hour - a.hour) + (this.minute - a.minute) / 60.0f + (this.sek - a.sek) / 3600.0f);
+    }
+
+    private int getDayInMonth(long m){
+        if(m==1 || m==3 || m==5 || m==7 || m==8 || m==10 || m==12){
+            return 31;
+        } else if(m==4 || m==6 || m==9){
+            return 30;
+        } else if (m==2){
+            if(leapyear){
+                return 29;
+            } else {
+                return 28;
+            }
+        } else {
+            return 30;
         }
-        if(amonth==12 && month==1){
-            month = 13;
-        }
-        return ((long) (month-a.month)*24*31 + (this.day - a.day) * 24 + (this.hour - a.hour) + (this.minute - a.minute) / 60.0f + (this.sek - a.sek) / 3600.0f);
     }
 
     public int getHour() {
@@ -80,6 +108,10 @@ public class Time {
 
     public int getMonth(){
         return month;
+    }
+
+    public boolean isLeapyear(){
+        return leapyear;
     }
 
 }

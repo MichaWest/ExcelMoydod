@@ -1,5 +1,7 @@
 package Data;
 
+import Data.Workers.Time;
+
 public class DateTime implements Comparable<DateTime>{
     final private Date date;
     private Time workTimeP;

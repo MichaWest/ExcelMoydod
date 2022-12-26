@@ -1,9 +1,12 @@
-package Data;
+package Data.Workers;
+
+import Data.DateTime;
+import Data.Post;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Worker implements Comparable<Worker> {
+public class Worker implements Comparable<Worker>{
     private final List<DateTime> workTime = new ArrayList<>();
 
     private String name;
@@ -42,33 +45,38 @@ public class Worker implements Comparable<Worker> {
                         dt.setStartEntr1(StartEnter1);
                         dt.setLastEnterTime1(StartEnter1);
                     } else {
-                        if(dt.getEndEntr1()!=null && wt.getStartEntr1().compare(dt.getEndEntr1())>9){
-                            wt.setLastEnterTime1(StartEnter1);
-                            workTime.add(wt);
+                        if(dt.getEndEntr1() !=null) {
+                            if(StartEnter1.compare(dt.getEndEntr1())>8) {
+                                wt.setLastEnterTime1(StartEnter1);
+                                workTime.add(wt);
+                            }
                         }
                         dt.setLastEnterTime1(StartEnter1);
                     }
                 }
 
                 if(StartEnter2 != null){
-                    if(dt.getStartEntr1()!=null) {
+                    if(dt.getLastEnterTime1()!=null) {
+                    //if(dt.getStartEntr1()!=null) {
                         if (dt.getStartEntr2() == null) {
                             dt.setStartEntr2(StartEnter2);
                             dt.setLastEnterTime2(StartEnter2);
                         } else {
-                            if(dt.getEndEntr1()==null && dt.getEndEntr2()!=null && StartEnter2.compare(dt.getEndEntr2())>9){
-                                wt.setLastEnterTime1(StartEnter1);
-                                wt.setLastEnterTime2(StartEnter2);
-                                wt.setStartEntr1(dt.getStartEntr1());
-                                workTime.add(wt);
+                            if(dt.getEndEntr2()!=null) {
+                                if (dt.getEndEntr1() == null && StartEnter2.compare(dt.getEndEntr2()) > 8) {
+                                    wt.setLastEnterTime1(dt.getLastEnterTime1());
+                                    wt.setLastEnterTime2(StartEnter2);
+                                    wt.setStartEntr1(dt.getLastEnterTime1());
+                                    workTime.add(wt);
+                                }
+                                dt.setLastEnterTime2(StartEnter2);
                             }
-                            dt.setLastEnterTime2(StartEnter2);
                         }
                     }
                 }
 
                 if(EndEnter1 != null){
-                    if(dt.getStartEntr1()!=null){
+                    if(dt.getStartEntr1()!=null &&  dt.getLastEnterTime1()!=null){
                         dt.setEndEntr1(EndEnter1);
                         if(EndEnter1.compare(dt.getStartEntr1()) < 15) {
                             dt.setWorkTime1(Time.add(dt.getWorkTime1(), Time.sub(EndEnter1, dt.getLastEnterTime1())));
@@ -78,7 +86,7 @@ public class Worker implements Comparable<Worker> {
                 }
 
                 if(EndEnter2 != null){
-                    if(dt.getStartEntr2()!=null){
+                    if(dt.getStartEntr2()!=null &&  dt.getLastEnterTime2()!=null){
                         dt.setEndEntr2(EndEnter2);
                         if (EndEnter2.compare(dt.getStartEntr2()) < 15) {
                             dt.setWorkTime2(Time.add(dt.getWorkTime2(), Time.sub(EndEnter2, dt.getLastEnterTime2())));
@@ -87,21 +95,22 @@ public class Worker implements Comparable<Worker> {
                     }
                 }
 
-                if(number==93) {
-                    System.out.printf("%-25s %-25s %-25s %-25s %-25s %-25s %-25s %-25s\n", "StartEntr1: " + (dt.getStartEntr1() != null ? dt.getStartEntr1().toString() : "null"),
-                            ", StartEntr2: " + (dt.getStartEntr2() != null ? dt.getStartEntr2().toString() : "null"),
-                            ", LastEnter1: " + (dt.getLastEnterTime1() != null ? dt.getLastEnterTime1().toString() : "null"),
-                            ", LastEnter2: " + (dt.getLastEnterTime2() != null ? dt.getLastEnterTime2().toString() : "null"),
-                            ", EndEnter1: " + (dt.getEndEntr1() != null ? dt.getEndEntr1().toString() : "null"),
-                            ", EndEnter2: " + (dt.getEndEntr2() != null ? dt.getEndEntr2().toString() : "null"),
-                            ",Last1- End1: " + (dt.getEndEntr1() != null && dt.getLastEnterTime1()!=null ?dt.getLastEnterTime1().compare(dt.getEndEntr1()) : "null"),
-                            ",Last2- End2: " + (dt.getEndEntr2() != null && dt.getLastEnterTime2()!=null ?dt.getLastEnterTime2().compare(dt.getEndEntr2()) : "null"));
+                /*if(number==106) {
+                    System.out.printf("%-25s %-25s %-25s %-25s %-25s %-25s %-25s %-25s\n", "StartEntr1: " + (dt.getStartEntr1() != null ? dt.getStartEntr1().toString() : "null")+", ",
+                            "StartEntr2: " + (dt.getStartEntr2() != null ? dt.getStartEntr2().toString() : "null")+", ",
+                            "LastEnter1: " + (dt.getLastEnterTime1() != null ? dt.getLastEnterTime1().toString() : "null")+", ",
+                            "LastEnter2: " + (dt.getLastEnterTime2() != null ? dt.getLastEnterTime2().toString() : "null")+", ",
+                            "EndEnter1: " + (dt.getEndEntr1() != null ? dt.getEndEntr1().toString() : "null")+", ",
+                            "EndEnter2: " + (dt.getEndEntr2() != null ? dt.getEndEntr2().toString() : "null")+", ",
+                            "Last1- End1: " + (dt.getEndEntr1() != null && dt.getLastEnterTime1()!=null ?dt.getLastEnterTime1().compare(dt.getEndEntr1()) : "null")+", ",
+                            "Last2- End2: " + (dt.getEndEntr2() != null && dt.getLastEnterTime2()!=null ?dt.getLastEnterTime2().compare(dt.getEndEntr2()) : "null")+", ",
+                            "WorkTimw: "+(dt.getWorkTime1()!=null ? dt.getWorkTime1().toString() : "null"));
 
                     // ", EndEnter1-LastEnter1: " + ((dt.getEndEntr1() != null && dt.getLastEnterTime1() != null) ? Time.sub(dt.getEndEntr1(), dt.getLastEnterTime1()) : "null") +
                     // ", EndEnter2-LastEnter2: " + ((dt.getEndEntr2() != null && dt.getLastEnterTime2() != null) ? Time.sub(dt.getEndEntr2(), dt.getLastEnterTime2()) : "null") +
                     // ", WorkTime1: " + (dt.getWorkTime1() != null ? dt.getWorkTime1() : "null") +
                     //", WorkTime2: " + (dt.getWorkTime2() != null ? dt.getWorkTime2() : "null"));
-                }
+                }*/
 
 
             } else {
@@ -130,7 +139,7 @@ public class Worker implements Comparable<Worker> {
 
     @Override
     public int compareTo(Worker o) {
-        return Integer.compare(this.number, o.number);
+        return this.vorname.compareTo(o.vorname);
     }
 
     public Post getPost(){

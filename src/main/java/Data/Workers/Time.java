@@ -1,4 +1,4 @@
-package Data;
+package Data.Workers;
 
 public class Time {
     int month;
@@ -28,7 +28,7 @@ public class Time {
 
     @Override
     public String toString() {
-        return (hour<10?"0"+hour:hour) + ":" + (minute<10?"0"+minute:minute) + ":" + (sek<10?"0"+sek:sek);
+        return ((hour<10?"0"+hour:hour) + ":" + (minute<10?"0"+minute:minute) + ":" + (sek<10?"0"+sek:sek));
     }
 
     public static Time sub(Time a, Time b) {
@@ -61,7 +61,7 @@ public class Time {
         }
     }
 
-    public float compare(Time a) {
+    public double compare(Time a) {
         long amonth = a.month;
         long month = this.month;
         int k = getDayInMonth(month);
@@ -70,8 +70,8 @@ public class Time {
         if(amonth==1 & month==12)
             amonth = 13;
         else if (amonth==12 & month==1)
-            month = 1;
-        return (( month * k - amonth * ak)*24 + (this.day - a.day) * 24 + (this.hour - a.hour) + (this.minute - a.minute) / 60.0f + (this.sek - a.sek) / 3600.0f);
+            month = 13;
+        return (( month * k - amonth * ak)*24 + (this.day - a.day) * 24 + (this.hour - a.hour) + (this.minute - a.minute) / 60.0d + (this.sek - a.sek) / 3600.0d);
     }
 
     private int getDayInMonth(long m){
@@ -112,6 +112,10 @@ public class Time {
 
     public boolean isLeapyear(){
         return leapyear;
+    }
+
+    public void setHour(int h){
+        hour = h;
     }
 
 }

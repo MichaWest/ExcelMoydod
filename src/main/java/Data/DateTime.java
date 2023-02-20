@@ -92,6 +92,20 @@ public class DateTime implements Comparable<DateTime>{
         return workTimeZ;
     }
 
+    public DateTime copy(){
+        DateTime r = new DateTime(this.date, this.id);
+        r.endEntr1 = this.endEntr1;
+        r.endEntr2 = this.endEntr2;
+        r.startEntr1 = this.startEntr1;
+        r.startEntr2 = this.startEntr2;
+        r.workTimeP = this.workTimeP;
+        r.workTimeZ = this.workTimeZ;
+        r.lastEnterTimeP = this.lastEnterTimeP;
+        r.lastEnterTimeZ = this.lastEnterTimeZ;
+        return r;
+
+    }
+
     @Override
     public int compareTo(DateTime o) {
         int dateCompare = date.compareTo(o.getDate());

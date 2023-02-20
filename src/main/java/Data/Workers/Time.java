@@ -1,12 +1,12 @@
 package Data.Workers;
 
 public class Time {
-    int month;
-    int day;
-    int minute;
-    int hour;
-    int sek;
-    boolean leapyear;
+    final int month;
+    final int day;
+    final int minute;
+    final int hour;
+    final int sek;
+    final boolean leapyear;
 
     public Time(int mo, int d, int h, int m, int s, boolean l) {
         day = d;
@@ -114,8 +114,5 @@ public class Time {
         return leapyear;
     }
 
-    public void setHour(int h){
-        hour = h;
-    }
 
 }

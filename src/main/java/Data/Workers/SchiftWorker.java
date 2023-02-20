@@ -6,7 +6,7 @@ import Data.Post;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SchiftWorker implements Comparable<SchiftWorker>{
+public class SchiftWorker implements Comparable<SchiftWorker>, Employee{
     private final List<DateTime> workTime = new ArrayList<>();
 
     private String name;
@@ -24,7 +24,8 @@ public class SchiftWorker implements Comparable<SchiftWorker>{
     }
 
 
-    public void setWorkTime(DateTime wt){
+    public void setWorkTime(DateTime w){
+        DateTime wt = w.copy();
         if ((workTime.size() != 0)) {
             DateTime dt = workTime.get(workTime.size() - 1);
 
@@ -34,37 +35,53 @@ public class SchiftWorker implements Comparable<SchiftWorker>{
             Time EndEnter2 = wt.getEndEntr2();
 
             if(StartEnter1 != null){
-                Time start = dt.getStartEntr1();
-                if(dt.getStartEntr1()==null){ //Первый вход
-                    Time t = isInInterval(start, Enter.Start);
-                    dt.setStartEntr1(t);
-                    dt.setLastEnterTime1(t);
-                } else{
-                    if(dt.getEndEntr1() != null){
-                        if(StartEnter1.compare(dt.getEndEntr1())>8){  //Начало следущей смены
-                            Time t = isInInterval(start, Enter.Start);
-                            wt.setStartEntr1(t);
-                            wt.setLastEnterTime1(t);
+                if(dt.getStartEntr1()==null){
+
+                    setWorkType(StartEnter1);
+                    StartEnter1 = isInInterval(StartEnter1, Enter.Start);
+                    dt.setStartEntr1(StartEnter1);
+
+                    dt.setLastEnterTime1(StartEnter1);
+                } else {
+                    if(dt.getEndEntr1() !=null) {
+                        if(StartEnter1.compare(dt.getEndEntr1())>8) {
+
+                            setWorkType(StartEnter1);
+                            StartEnter1 = isInInterval(StartEnter1, Enter.Start);
+                            wt.setLastEnterTime1(StartEnter1);
+                            wt.setStartEntr1(StartEnter1);
+
                             workTime.add(wt);
                         }
                     }
-                    dt.setLastEnterTime1(isInInterval(start, Enter.Start));
+                    StartEnter1 = isInInterval(StartEnter1, Enter.Start);
+                    dt.setLastEnterTime1(StartEnter1);
                 }
             }
 
             if(StartEnter2 != null){
-                if(dt.getLastEnterTime1()!=null){
-                    if(dt.getStartEntr2() == null){
+
+                if(dt.getLastEnterTime1()!=null) {
+                    if (dt.getStartEntr2() == null) {
+
+                        setWorkType(StartEnter2);
+                        StartEnter2 = isInInterval(StartEnter2, Enter.Start);
                         dt.setStartEntr2(StartEnter2);
+
                         dt.setLastEnterTime2(StartEnter2);
                     } else {
-                        if( dt.getEndEntr1() != null){
-                            if(dt.getEndEntr1() == null && StartEnter2.compare(dt.getEndEntr2())>8){
-                                wt.setLastEnterTime1(isInInterval(dt.getLastEnterTime1(), Enter.Start));
+                        if(dt.getEndEntr2()!=null) {
+                            if (dt.getEndEntr1() == null && StartEnter2.compare(dt.getEndEntr2()) > 8) {
+
+                                setWorkType(StartEnter2);
+                                StartEnter2 = isInInterval(StartEnter2, Enter.Start);
+                                wt.setLastEnterTime1(dt.getLastEnterTime1());
                                 wt.setLastEnterTime2(StartEnter2);
-                                wt.setStartEntr1(isInInterval(dt.getLastEnterTime1(), Enter.Start));
+                                wt.setStartEntr1(dt.getLastEnterTime1());
+
                                 workTime.add(wt);
                             }
+                            StartEnter2 = isInInterval(StartEnter2, Enter.Start);
                             dt.setLastEnterTime2(StartEnter2);
                         }
                     }
@@ -72,32 +89,78 @@ public class SchiftWorker implements Comparable<SchiftWorker>{
             }
 
             if(EndEnter1 != null){
-                if(dt.getStartEntr1()!=null && dt.getLastEnterTime1()!=null){
-                    EndEnter1 = isInInterval(EndEnter1, Enter.End);
-                    dt.setEndEntr1(EndEnter1);
-                    if(EndEnter1.compare(dt.getEndEntr1()) < 15){
-                        dt.setWorkTime1(Time.add(dt.getWorkTime1(), Time.sub(EndEnter1, dt.getLastEnterTime1())));
-                        dt.setLastEnterTime1(null);
+                if(dt.getStartEntr1()!=null &&  dt.getLastEnterTime1()!=null){
+                    System.out.println(EndEnter1+"-"+dt.getStartEntr1()+"="+EndEnter1.compare(dt.getStartEntr1()));
+                    if(EndEnter1.compare(dt.getStartEntr1())>0) {
+                        dt.setEndEntr1(isInInterval(EndEnter1, Enter.End));
+                        if (EndEnter1.compare(dt.getStartEntr1()) < 15) {
+                            EndEnter1 = isInInterval(EndEnter1, Enter.End);
+                            dt.setWorkTime1(Time.add(dt.getWorkTime1(), Time.sub(EndEnter1, dt.getLastEnterTime1())));
+                            dt.setLastEnterTime1(null);
+                        }
+                    } else {
+                        dt.setEndEntr1(dt.getStartEntr1());
                     }
                 }
             }
 
             if(EndEnter2 != null){
                 if(dt.getStartEntr2()!=null &&  dt.getLastEnterTime2()!=null){
-                    dt.setEndEntr2(EndEnter2);
-                    if (EndEnter2.compare(dt.getStartEntr2()) < 15) {
-                        dt.setWorkTime2(Time.add(dt.getWorkTime2(), Time.sub(EndEnter2, dt.getLastEnterTime2())));
-                        dt.setLastEnterTime2(null);
+                    System.out.println(EndEnter2+"-"+dt.getStartEntr2()+"="+EndEnter2.compare(dt.getStartEntr2()));
+                    if(EndEnter2.compare(dt.getStartEntr2())>0) {
+                        dt.setEndEntr2(isInInterval(EndEnter2, Enter.End));
+                        if (EndEnter2.compare(dt.getStartEntr2()) < 15) {
+                            EndEnter2 = isInInterval(EndEnter2, Enter.End);
+                            dt.setWorkTime2(Time.add(dt.getWorkTime2(), Time.sub(EndEnter2, dt.getLastEnterTime2())));
+                            dt.setLastEnterTime2(null);
+                        }
+                    }else {
+                        dt.setEndEntr2(dt.getStartEntr2());
                     }
                 }
             }
 
+            if(number==65) {
+                    System.out.printf("%-25s %-25s %-25s %-25s %-25s %-25s\n",
+                            "StartEntr1: " + (dt.getStartEntr1() != null ? dt.getStartEntr1().toString() : "null")+", ",
+                            "StartEntr2: " + (dt.getStartEntr2() != null ? dt.getStartEntr2().toString() : "null")+", ",
+                            "LastEnter1: " + (dt.getLastEnterTime1() != null ? dt.getLastEnterTime1().toString() : "null")+", ",
+                            "LastEnter2: " + (dt.getLastEnterTime2() != null ? dt.getLastEnterTime2().toString() : "null")+", ",
+                            "EndEnter1: " + (dt.getEndEntr1() != null ? dt.getEndEntr1().toString() : "null")+", ",
+                            "EndEnter2: " + (dt.getEndEntr2() != null ? dt.getEndEntr2().toString() : "null"));
+                            //"WorkTime1: " + (dt.getWorkTime1() != null ? dt.getWorkTime1() : "null")+", ",
+                            //"WorkTime2: " + (dt.getWorkTime2() != null ? dt.getWorkTime2() : "null"));
+
+                    // ", EndEnter1-LastEnter1: " + ((dt.getEndEntr1() != null && dt.getLastEnterTime1() != null) ? Time.sub(dt.getEndEntr1(), dt.getLastEnterTime1()) : "null") +
+                    // ", EndEnter2-LastEnter2: " + ((dt.getEndEntr2() != null && dt.getLastEnterTime2() != null) ? Time.sub(dt.getEndEntr2(), dt.getLastEnterTime2()) : "null") +
+                    // ", WorkTime1: " + (dt.getWorkTime1() != null ? dt.getWorkTime1() : "null") +
+                    //", WorkTime2: " + (dt.getWorkTime2() != null ? dt.getWorkTime2() : "null"));
+                }
         } else {
             if (wt.getStartEntr1() != null) {
+                setWorkType(wt.getStartEntr1());
                 wt.setLastEnterTime1(isInInterval(wt.getStartEntr1(), Enter.Start));
                 wt.setStartEntr1(isInInterval(wt.getStartEntr1(), Enter.Start));
                 workTime.add(wt);
             }
+        }
+    }
+
+    private boolean dayWork;
+    private void setWorkType(Time t){
+        switch(post) {
+            case Office:
+                dayWork = true;
+                break;
+            case Worker:
+                int day = 8;
+                int night = 20;
+                if(t.compare(new Time(t.month, t.day, day+3, 0, 0, t.leapyear)) < 0 && t.compare(new Time(t.month, t.day, day - 3, 0, 0, t.leapyear)) > 0){
+                    dayWork = true;
+                } else if(t.compare(new Time(t.month, t.day, night+3, 0, 0, t.leapyear)) < 0 && t.compare(new Time(t.month, t.day, night - 3, 0, 0, t.leapyear)) > 0){
+                    dayWork = false;
+                }
+                break;
         }
     }
 
@@ -115,17 +178,17 @@ public class SchiftWorker implements Comparable<SchiftWorker>{
                 break;
         }
         if(enter == Enter.Start) {
-            if(t.compare(new Time(t.month, t.day, day, 0, 0, t.leapyear)) < 0 && t.compare(new Time(t.month, t.day, day - 3, 0, 0, t.leapyear)) > 0){
+            if(dayWork && t.compare(new Time(t.month, t.day, day, 0, 0, t.leapyear)) < 0 ){
                 return new Time(t.month, t.day, day, 0, 0, t.leapyear);
-            } else if(t.compare(new Time(t.month, t.day, night, 0, 0, t.leapyear)) < 0 && t.compare(new Time(t.month, t.day, night - 3, 0, 0, t.leapyear)) > 0){
+            } else if(!dayWork && t.compare(new Time(t.month, t.day, night, 0, 0, t.leapyear)) < 0 ){
                 return new Time(t.month, t.day, night, 0, 0, t.leapyear);
             } else {
                 return t;
             }
         }else{
-            if (t.compare(new Time(t.month, t.day, day, 0, 0, t.leapyear)) > 0 && t.compare(new Time(t.month, t.day, day + 3, 0, 0, t.leapyear)) < 0){
+            if (!dayWork && t.compare(new Time(t.month, t.day+1, day, 0, 0, t.leapyear)) > 0 ) {
                 return new Time(t.month, t.day, day, 0, 0, t.leapyear);
-            } else if (t.compare(new Time(t.month, t.day, night, 0, 0, t.leapyear)) > 0 && t.compare(new Time(t.month, t.day, night + 3, 0, 0, t.leapyear)) < 0){
+            } else if (dayWork && t.compare(new Time(t.month, t.day, night, 0, 0, t.leapyear)) > 0){
                 return new Time(t.month, t.day, night, 0, 0, t.leapyear);
             } else{
                 return t;
@@ -139,7 +202,7 @@ public class SchiftWorker implements Comparable<SchiftWorker>{
     }
 
     private enum Enter {
-        Start, End;
+        Start, End
     }
 
     public void setName(String s){
